@@ -1,283 +1,771 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gemini Chat Premium</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(-45deg, #667eea, #764ba2, #23a6d5, #23d5ab);
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #FF6B6B, #FFC14F, #8D4BFF, #4FD1C5);
       background-size: 400% 400%;
       animation: gradient 20s ease infinite;
       color: #333;
       height: 100vh;
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
+
     @keyframes gradient {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-    .card, .chat-box, .login-form, .register-form {
-      background: #fff;
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-      max-width: 480px;
-      margin: 40px auto;
+
+    /* Card & Form Styling */
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      max-width: 500px;
+      width: 90%;
+      margin: auto;
+      backdrop-filter: blur(10px);
+      transition: all 0.5s ease-in-out;
+      transform: scale(0.95);
+      opacity: 0;
+      animation: fadeInScale 0.7s forwards;
     }
-    input, button {
+
+    @keyframes fadeInScale {
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .card h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+      font-weight: 700;
+      font-size: 2.2em;
+      letter-spacing: 1px;
+      background: linear-gradient(45deg, #FF6B6B, #8D4BFF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
-      padding: 16px;
-      margin: 14px 0;
-      font-size: 18px;
-      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 15px 0;
+      font-size: 1.1em;
+      border-radius: 12px;
       border: 1px solid #ccc;
+      background-color: #f7f7f7;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
     }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #8D4BFF;
+      box-shadow: 0 0 0 4px rgba(141, 75, 255, 0.2);
+      outline: none;
+    }
+
     button {
-      background: #667eea;
-      color: white;
+      width: 100%;
+      padding: 18px;
+      margin-top: 25px;
+      font-size: 1.2em;
+      border-radius: 12px;
       border: none;
+      background: linear-gradient(45deg, #8D4BFF, #FF6B6B);
+      color: white;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.3s;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
-    button:hover { background: #556cd6; }
-    #chat-container {
-      display: flex;
-      flex-direction: row;
-      height: 100vh;
-      display: none;
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #FF6B6B, #8D4BFF);
+      z-index: -1;
+      transition: transform 0.4s ease;
+      transform: scaleX(0);
+      transform-origin: right;
     }
-    #user-list {
-      width: 280px;
-      background: #f4f4f4;
-      padding: 20px;
-      overflow-y: auto;
-      border-right: 2px solid #ddd;
-      display: none;
+
+    button:hover::before {
+      transform: scaleX(1);
+      transform-origin: left;
     }
-    #user-list ul li {
-      background: #fff;
-      margin-bottom: 12px;
-      padding: 12px;
-      border-radius: 10px;
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .link {
+      color: #8D4BFF;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: 0.2s;
+      text-align: center;
+      margin-top: 20px;
+      display: block;
+      font-size: 1em;
+      transition: color 0.3s ease;
     }
-    #user-list ul li:hover {
-      background: #e2e8ff;
+
+    .link:hover {
+      color: #FF6B6B;
+      text-decoration: underline;
     }
+
+    .message {
+      color: red;
+      text-align: center;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    /* Chat Container */
+    #chat-container {
+      display: none;
+      flex-direction: row;
+      height: 90vh; /* Adjust for better fit on various screens */
+      width: 95vw;
+      max-width: 1400px; /* Max width for larger screens */
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideInUp 0.7s forwards;
+    }
+
+    @keyframes slideInUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* User List */
+    #user-list {
+      width: 320px; /* Slightly wider user list */
+      background: #f0f2f5;
+      padding: 25px;
+      overflow-y: auto;
+      border-right: 2px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    #user-list h3 {
+      font-size: 1.8em;
+      color: #333;
+      margin-bottom: 25px;
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      background: #f0f2f5;
+      padding-bottom: 10px;
+      z-index: 10;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    #user-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #user-list ul li,
+    #user-list .gemini-ai-link {
+      background: #ffffff;
+      margin-bottom: 15px;
+      padding: 15px 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      font-size: 1.1em;
+      font-weight: 500;
+      color: #555;
+    }
+
+    #user-list ul li:hover,
+    #user-list .gemini-ai-link:hover {
+      background: #e6f0ff;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+    }
+
+    #user-list .gemini-ai-link {
+      color: #4CAF50;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+
+    #user-list .gemini-ai-link i {
+      margin-right: 10px;
+      color: #4CAF50;
+    }
+
+    #user-list hr {
+      border: none;
+      border-top: 1px solid #e0e0e0;
+      margin: 25px 0;
+    }
+
+    /* Chat Box */
     #chat-box {
       flex: 1;
       display: flex;
       flex-direction: column;
       background: #ffffff;
     }
+
     #chat-header {
-      background: #667eea;
+      background: linear-gradient(45deg, #4FD1C5, #8D4BFF);
       color: #fff;
-      padding: 20px;
+      padding: 25px;
       font-weight: bold;
-      font-size: 20px;
+      font-size: 1.8em;
       text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-top-right-radius: 25px;
+      position: relative;
+      overflow: hidden;
     }
+
+    #chat-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(30deg);
+      animation: headerShine 3s infinite linear;
+    }
+
+    @keyframes headerShine {
+      0% { transform: rotate(30deg) translate(-50%, -50%); }
+      100% { transform: rotate(30deg) translate(50%, 50%); }
+    }
+
     #chat-messages {
       flex: 1;
-      padding: 20px;
+      padding: 25px;
       overflow-y: auto;
-      background: #f1f5ff;
+      background: #f9f9fa; /* Lighter background for messages */
+      display: flex;
+      flex-direction: column;
+      gap: 15px; /* Space between messages */
     }
+
+    /* Message Bubbles */
     .msg-user, .msg-bot {
-      margin: 12px 0;
-      padding: 14px 20px;
-      max-width: 80%;
-      border-radius: 20px;
+      margin: 0; /* Remove default margin for consistent gap */
+      padding: 16px 22px;
+      max-width: 70%; /* Smaller max-width */
+      border-radius: 25px; /* More rounded */
       word-wrap: break-word;
+      font-size: 1.05em;
+      line-height: 1.5;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      position: relative;
+      animation: fadeInMessage 0.3s ease-out;
     }
+
+    @keyframes fadeInMessage {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .msg-user {
-      background: #667eea;
+      background: linear-gradient(135deg, #8D4BFF, #FF6B6B);
       color: white;
       align-self: flex-end;
       text-align: right;
+      border-bottom-right-radius: 5px; /* Tail effect */
     }
+
     .msg-bot {
-      background: #e2e8ff;
+      background: #e0f2fe; /* Lighter blue for bot */
       color: #333;
       align-self: flex-start;
+      border-bottom-left-radius: 5px; /* Tail effect */
     }
+
+    .msg-user img, .msg-bot img,
+    .msg-user audio, .msg-bot audio {
+      max-width: 100%;
+      border-radius: 15px;
+      display: block;
+      margin-top: 10px;
+    }
+
+    /* Chat Input */
     #chat-input {
       display: flex;
-      padding: 15px;
+      padding: 20px;
       background: white;
       border-top: 1px solid #ddd;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
+      align-items: center;
+      gap: 10px; /* Space between input elements */
     }
+
     #chat-input input[type="text"] {
       flex: 1;
-      padding: 15px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      margin-right: 10px;
-      font-size: 16px;
+      padding: 16px 20px;
+      border-radius: 25px;
+      border: 1px solid #e0e0e0;
+      font-size: 1.1em;
+      background-color: #f7f7f7;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
     }
+
+    #chat-input input[type="text"]:focus {
+      border-color: #4FD1C5;
+      box-shadow: 0 0 0 4px rgba(79, 209, 197, 0.2);
+      outline: none;
+    }
+
     #chat-input input[type="file"] {
       display: none;
     }
+
     #chat-input button {
-      padding: 14px 20px;
-      border-radius: 10px;
-      font-size: 16px;
+      padding: 16px 20px;
+      border-radius: 25px;
+      font-size: 1.2em;
+      margin: 0; /* Remove default margin */
+      width: auto;
+      min-width: 60px;
+      background: linear-gradient(45deg, #4FD1C5, #8D4BFF);
+      color: white;
+      border: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
     }
-    #auth-section { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-    .link { color: #667eea; cursor: pointer; text-align: center; margin-top: 10px; display: block; }
+
+    #chat-input button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Admin & User Controls */
+    .admin-controls, .user-controls {
+      margin-top: 25px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+
+    .admin-controls h4, .user-controls h4 {
+      font-size: 1.3em;
+      margin-bottom: 15px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .admin-controls button, .user-controls button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .admin-controls button.red, .user-controls button.red { background: #dc3545; }
+    .admin-controls button.green, .user-controls button.green { background: #28a745; }
+    .admin-controls button.orange, .user-controls button.orange { background: #ffc107; }
+
+    .admin-controls button:hover, .user-controls button:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
     .stats {
-      font-size: 13px;
-      background: #eee;
-      padding: 5px;
-      margin-top: 10px;
-      border-radius: 4px;
+      font-size: 0.9em;
+      background: #eef;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 10px;
+      border: 1px solid #d0d0f0;
+      color: #555;
+      line-height: 1.6;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        align-items: flex-start;
+        padding-top: 20px;
+      }
+      .card {
+        padding: 30px;
+        margin: 20px auto;
+        width: 95%;
+      }
+      #chat-container {
+        flex-direction: column;
+        height: 95vh;
+        width: 98vw;
+        border-radius: 15px;
+      }
+      #user-list {
+        width: 100%;
+        height: 250px; /* Fixed height for user list on small screens */
+        border-right: none;
+        border-bottom: 2px solid #e0e0e0;
+      }
+      #chat-box {
+        flex: 1;
+      }
+      #chat-messages {
+        padding: 15px;
+        gap: 10px;
+      }
+      .msg-user, .msg-bot {
+        max-width: 90%;
+        padding: 12px 18px;
+        font-size: 0.95em;
+      }
+      #chat-input {
+        flex-wrap: wrap;
+        padding: 15px;
+      }
+      #chat-input input[type="text"] {
+        flex-basis: 100%;
+        margin-bottom: 10px;
+      }
+      #chat-input button {
+        flex-basis: calc(50% - 5px);
+      }
     }
   </style>
 </head>
 <body>
   <div id="auth-section">
     <div class="login-form card" id="login-card">
-      <h2>Masuk ke Chat</h2>
-      <input id="login-username" placeholder="Username">
-      <input id="login-password" type="password" placeholder="Password">
+      <h2>Masuk ke Chat Premium</h2>
+      <input id="login-username" type="text" placeholder="Username Anda">
+      <input id="login-password" type="password" placeholder="Password Anda">
       <button onclick="login()">Login</button>
       <p class="link" onclick="toggleRegister(true)">Belum punya akun? Daftar sekarang</p>
-      <p id="login-msg" style="color:red;text-align:center;"></p>
+      <p id="login-msg" class="message"></p>
     </div>
     <div class="register-form card" id="register-card" style="display:none">
-      <h2>Buat Akun</h2>
-      <input id="reg-name" placeholder="Nama Lengkap">
-      <input id="reg-username" placeholder="Username">
-      <input id="reg-password" type="password" placeholder="Password">
+      <h2>Buat Akun Baru</h2>
+      <input id="reg-name" type="text" placeholder="Nama Lengkap Anda">
+      <input id="reg-username" type="text" placeholder="Username Pilihan">
+      <input id="reg-password" type="password" placeholder="Password Kuat">
       <button onclick="register()">Daftar</button>
       <p class="link" onclick="toggleRegister(false)">Sudah punya akun? Login</p>
-      <p id="reg-msg" style="color:red;text-align:center;"></p>
+      <p id="reg-msg" class="message"></p>
     </div>
-  </div>  <div id="chat-container">
+  </div>
+
+  <div id="chat-container">
     <div id="user-list">
-      <h3>Pengguna</h3>
+      <h3>Daftar Pengguna</h3>
+      <div id="search-user-container" style="margin-bottom: 15px;">
+        <input type="text" id="search-user-input" placeholder="Cari pengguna..." onkeyup="filterUsers()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+      </div>
       <ul id="user-ul"></ul>
       <hr>
-      <p onclick="startChat('gemini')">🤖 Gemini AI</p>
-      <div class="stats" id="admin-stats" style="display:none"></div>
+      <p class="gemini-ai-link" onclick="startChat('gemini')"><i class="fas fa-robot"></i> Chat dengan Gemini AI</p>
+
+      <div class="admin-controls" id="admin-controls-panel" style="display:none;">
+        <h4><i class="fas fa-cog"></i> Kontrol Admin</h4>
+        <button class="orange" onclick="showAllUserStats()"><i class="fas fa-chart-line"></i> Lihat Statistik Pengguna</button>
+        <button class="red" onclick="showBanUserModal()"><i class="fas fa-ban"></i> Ban Pengguna</button>
+        <button class="green" onclick="showUnbanUserModal()"><i class="fas fa-check-circle"></i> Unban Pengguna</button>
+        <button class="red" onclick="showDeleteUserModal()"><i class="fas fa-trash-alt"></i> Hapus Pengguna</button>
+        <div id="admin-stats" class="stats"></div>
+      </div>
+
+      <div class="user-controls" id="user-controls-panel" style="display:none;">
+        <h4><i class="fas fa-user-circle"></i> Kontrol Pengguna</h4>
+        <button class="green" onclick="changeDisplayName()"><i class="fas fa-signature"></i> Ganti Nama Tampilan</button>
+        <button class="orange" onclick="changePassword()"><i class="fas fa-key"></i> Ganti Password</button>
+        <button class="red" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+
     </div>
     <div id="chat-box">
-      <div id="chat-header">Chat</div>
+      <div id="chat-header">Pilih Pengguna untuk Chat</div>
       <div id="chat-messages"></div>
       <div id="chat-input">
-        <input id="msg-input" type="text" placeholder="Tulis pesan..."><input type="file" id="file-input" accept="image/*,audio/*">
-        <button onclick="document.getElementById('file-input').click()"><i class="fas fa-paperclip"></i></button>
-        <button onclick="sendMessage()">Kirim</button>
+        <input id="msg-input" type="text" placeholder="Ketik pesan Anda...">
+        <input type="file" id="file-input" accept="image/*,audio/*,video/*">
+        <button title="Lampirkan File" onclick="document.getElementById('file-input').click()"><i class="fas fa-paperclip"></i></button>
+        <button title="Kirim Pesan" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
-  </div>  <script>
+  </div>
+
+  <div id="modal-backdrop" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="modal-content" class="card" style="max-width: 400px; padding: 25px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: fadeInScale 0.3s ease-out;">
+      <h3 id="modal-title" style="margin-bottom: 20px; text-align: center; color: #333; font-weight: 600;"></h3>
+      <div id="modal-body"></div>
+      <div style="margin-top: 20px; text-align: right;">
+        <button onclick="closeModal()" style="width: auto; padding: 10px 20px; background: #6c757d; margin-right: 10px;">Batal</button>
+        <button id="modal-confirm-btn" style="width: auto; padding: 10px 20px; background: #007bff;"></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Request Notification permission on page load
     Notification.requestPermission();
+
+    // Initial user data. Annas is admin.
     let users = JSON.parse(localStorage.getItem('users')) || [
-      { username: 'annas', password: 'annas', name: 'Admin', role: 'admin', stats: { logins: 0, chats: 0 } }
+      { username: 'annas', password: 'annas', name: 'Admin Annas', role: 'admin', banned: false, stats: { logins: 0, chatsSent: 0, chatsReceived: 0 } }
     ];
     let currentUser = null;
     let activeReceiver = null;
+    let messages = JSON.parse(localStorage.getItem('messages')) || {}; // Store messages by sender-receiver pair
 
+    // --- Authentication Functions ---
     function toggleRegister(show) {
       document.getElementById('register-card').style.display = show ? 'block' : 'none';
       document.getElementById('login-card').style.display = show ? 'none' : 'block';
+      document.getElementById('reg-msg').innerText = '';
+      document.getElementById('login-msg').innerText = '';
     }
 
     function register() {
-      const name = document.getElementById('reg-name').value;
-      const username = document.getElementById('reg-username').value;
-      const password = document.getElementById('reg-password').value;
-      const exist = users.find(u => u.username === username);
-      if (exist) return document.getElementById('reg-msg').innerText = '⚠️ Username sudah digunakan.';
-      users.push({ username, password, name, role: 'user', stats: { logins: 0, chats: 0 } });
+      const name = document.getElementById('reg-name').value.trim();
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value.trim();
+
+      if (!name || !username || !password) {
+        return document.getElementById('reg-msg').innerText = '⚠️ Semua kolom harus diisi.';
+      }
+      if (users.find(u => u.username === username)) {
+        return document.getElementById('reg-msg').innerText = '⚠️ Username sudah digunakan.';
+      }
+
+      users.push({ username, password, name, role: 'user', banned: false, stats: { logins: 0, chatsSent: 0, chatsReceived: 0 } });
       localStorage.setItem('users', JSON.stringify(users));
       toggleRegister(false);
       alert('✅ Akun berhasil dibuat! Silakan login.');
+      document.getElementById('reg-name').value = '';
+      document.getElementById('reg-username').value = '';
+      document.getElementById('reg-password').value = '';
     }
 
     function login() {
-      const username = document.getElementById('login-username').value;
-      const password = document.getElementById('login-password').value;
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value.trim();
       const user = users.find(u => u.username === username && u.password === password);
-      if (!user) return document.getElementById('login-msg').innerText = '⚠️ Username atau password salah. Mohon daftar jika belum punya akun.';
+
+      if (!user) {
+        return document.getElementById('login-msg').innerText = '⚠️ Username atau password salah. Mohon daftar jika belum punya akun.';
+      }
+      if (user.banned) {
+        return document.getElementById('login-msg').innerText = '🚫 Akun Anda telah dibanned. Silakan hubungi admin.';
+      }
+
       currentUser = user;
-      user.stats.logins++;
+      currentUser.stats.logins++;
       localStorage.setItem('users', JSON.stringify(users));
+      
       document.getElementById('auth-section').style.display = 'none';
       document.getElementById('chat-container').style.display = 'flex';
-      document.getElementById('user-list').style.display = 'block';
-      document.getElementById('chat-header').innerText = `Chat sebagai ${user.name}`;
+      
+      document.getElementById('chat-header').innerText = `Selamat Datang, ${currentUser.name}!`;
       refreshUserList();
-      if (user.role === 'admin') showAdminStats();
+      
+      if (currentUser.role === 'admin') {
+        document.getElementById('admin-controls-panel').style.display = 'block';
+        showAdminStats();
+      } else {
+        document.getElementById('user-controls-panel').style.display = 'block';
+      }
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-password').value = '';
     }
 
+    function logout() {
+      currentUser = null;
+      activeReceiver = null;
+      document.getElementById('auth-section').style.display = 'flex';
+      document.getElementById('chat-container').style.display = 'none';
+      document.getElementById('admin-controls-panel').style.display = 'none';
+      document.getElementById('user-controls-panel').style.display = 'none';
+      document.getElementById('login-msg').innerText = 'Anda telah berhasil logout.';
+    }
+
+    // --- User List and Chat Management ---
     function refreshUserList() {
       const ul = document.getElementById('user-ul');
       ul.innerHTML = '';
-      users.forEach(u => {
-        if (u.username !== currentUser.username) {
-          const li = document.createElement('li');
-          li.innerText = `${u.name} (${u.username})`;
-          li.onclick = () => startChat(u.username);
-          ul.appendChild(li);
-        }
+      const loggedInUsers = users.filter(u => u.username !== currentUser.username && !u.banned);
+
+      loggedInUsers.forEach(u => {
+        const li = document.createElement('li');
+        li.innerText = `${u.name} (${u.username})`;
+        li.onclick = () => startChat(u.username);
+        ul.appendChild(li);
       });
+      filterUsers(); // Apply filter after refresh
     }
 
-    function showAdminStats() {
-      let statsDiv = document.getElementById('admin-stats');
-      let totalLogins = users.reduce((sum, u) => sum + u.stats.logins, 0);
-      let totalChats = users.reduce((sum, u) => sum + u.stats.chats, 0);
-      statsDiv.innerHTML = `👥 Total Akun: ${users.length}<br>🕒 Total Login: ${totalLogins}<br>💬 Total Chat: ${totalChats}`;
-      statsDiv.style.display = 'block';
+    function filterUsers() {
+      const input = document.getElementById('search-user-input').value.toLowerCase();
+      const userListItems = document.querySelectorAll('#user-ul li');
+      userListItems.forEach(item => {
+        const username = item.textContent.toLowerCase();
+        if (username.includes(input)) {
+          item.style.display = 'flex'; // Show if matches
+        } else {
+          item.style.display = 'none'; // Hide if not matches
+        }
+      });
     }
 
     function startChat(username) {
       activeReceiver = username;
       document.getElementById('chat-messages').innerHTML = '';
-      document.getElementById('chat-header').innerText = `Chat dengan ${username}`;
+      document.getElementById('chat-header').innerText = `Chat dengan ${users.find(u => u.username === username)?.name || 'Gemini AI'}`;
+      loadMessages();
+    }
+
+    function saveMessages() {
+      localStorage.setItem('messages', JSON.stringify(messages));
+    }
+
+    function loadMessages() {
+      document.getElementById('chat-messages').innerHTML = '';
+      const chatKey1 = `${currentUser.username}-${activeReceiver}`;
+      const chatKey2 = `${activeReceiver}-${currentUser.username}`;
+      const chatHistory = messages[chatKey1] || messages[chatKey2] || [];
+
+      chatHistory.forEach(msg => {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = msg.sender === currentUser.username ? 'msg-user' : 'msg-bot';
+        if (msg.type === 'text') {
+          msgDiv.innerText = msg.content;
+        } else if (msg.type === 'image') {
+          msgDiv.innerHTML = `<img src="${msg.content}" alt="Image" style="max-width:250px;">`;
+        } else if (msg.type === 'audio') {
+          msgDiv.innerHTML = `<audio controls src="${msg.content}"></audio>`;
+        } else if (msg.type === 'video') {
+          msgDiv.innerHTML = `<video controls src="${msg.content}" style="max-width:250px;"></video>`;
+        }
+        document.getElementById('chat-messages').appendChild(msgDiv);
+      });
+      document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
     }
 
     async function sendMessage() {
-      const msg = document.getElementById('msg-input').value.trim();
-      const file = document.getElementById('file-input').files[0];
+      const msgInput = document.getElementById('msg-input');
+      const fileInput = document.getElementById('file-input');
+      const msg = msgInput.value.trim();
+      const file = fileInput.files[0];
+
       if (!msg && !file) return;
-      currentUser.stats.chats++;
+      if (!activeReceiver) {
+        alert('⚠️ Pilih pengguna atau Gemini AI untuk memulai chat.');
+        return;
+      }
+      
+      currentUser.stats.chatsSent++;
       localStorage.setItem('users', JSON.stringify(users));
 
+      // Add message to chat history
+      const chatKey = `${currentUser.username}-${activeReceiver}`;
+      if (!messages[chatKey]) messages[chatKey] = [];
+
       if (msg) {
+        messages[chatKey].push({ sender: currentUser.username, receiver: activeReceiver, type: 'text', content: msg, timestamp: new Date().toISOString() });
         const userDiv = document.createElement('div');
         userDiv.className = 'msg-user';
         userDiv.innerText = msg;
         document.getElementById('chat-messages').appendChild(userDiv);
-        new Notification('📨 Pesan Dikirim!', { body: msg });
+        new Notification('📨 Pesan Dikirim!', { body: msg, icon: 'https://cdn-icons-png.flaticon.com/512/732/732200.png' });
       }
 
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
+          const fileContent = e.target.result;
+          let fileType = 'unknown';
+          if (file.type.startsWith('image')) fileType = 'image';
+          else if (file.type.startsWith('audio')) fileType = 'audio';
+          else if (file.type.startsWith('video')) fileType = 'video';
+
+          messages[chatKey].push({ sender: currentUser.username, receiver: activeReceiver, type: fileType, content: fileContent, timestamp: new Date().toISOString() });
+          
           const el = document.createElement('div');
           el.className = 'msg-user';
-          if (file.type.startsWith('image')) {
-            el.innerHTML = `<img src="${e.target.result}" style="max-width:200px;border-radius:10px">`;
-          } else if (file.type.startsWith('audio')) {
-            el.innerHTML = `<audio controls src="${e.target.result}"></audio>`;
+          if (fileType === 'image') {
+            el.innerHTML = `<img src="${fileContent}" style="max-width:250px;border-radius:15px">`;
+          } else if (fileType === 'audio') {
+            el.innerHTML = `<audio controls src="${fileContent}"></audio>`;
+          } else if (fileType === 'video') {
+            el.innerHTML = `<video controls src="${fileContent}" style="max-width:250px;border-radius:15px"></video>`;
           }
           document.getElementById('chat-messages').appendChild(el);
+          saveMessages();
         }
         reader.readAsDataURL(file);
       }
-
-      document.getElementById('msg-input').value = '';
-      document.getElementById('file-input').value = '';
+      
+      saveMessages(); // Save messages after adding to history
+      msgInput.value = '';
+      fileInput.value = ''; // Clear file input
+      document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
 
       if (activeReceiver === 'gemini') {
         const reply = await geminiReply(msg);
@@ -285,15 +773,27 @@
         botDiv.className = 'msg-bot';
         botDiv.innerText = reply;
         document.getElementById('chat-messages').appendChild(botDiv);
-        new Notification('🤖 Gemini Membalas', { body: reply });
+        new Notification('🤖 Gemini Membalas', { body: reply, icon: 'https://www.gstatic.com/images/branding/product/2x/gemini_2023_color_256dp.png' });
+      } else {
+        // Simulate message received for other users (in a real app, this would be via WebSocket)
+        const receiverUser = users.find(u => u.username === activeReceiver);
+        if (receiverUser) {
+          receiverUser.stats.chatsReceived++;
+          localStorage.setItem('users', JSON.stringify(users));
+        }
       }
       if (currentUser.role === 'admin') showAdminStats();
     }
 
     async function geminiReply(prompt) {
+      if (!prompt) return 'Hai! Ada yang bisa saya bantu?';
       try {
+        const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY'; // GANTI DENGAN API KEY GEMINI ASLI ANDA
+        if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY') {
+          return '⚠️ Harap ganti "YOUR_GEMINI_API_KEY" dengan kunci API Gemini yang valid untuk menggunakan fitur ini.';
+        }
         const res = await fetch(
-          'https://generativelanguage.googleapis.com/v1beta3/models/gemini-pro:generateContent?key=AIzaSyBFmdB7Z3In8onU6uPcoH1xwQwqJA11mKM',
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -301,10 +801,226 @@
           }
         );
         const data = await res.json();
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || '❌ Tidak bisa membalas';
+        const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '❌ Tidak bisa membalas';
+        
+        // Add Gemini reply to messages history
+        const chatKey = `${activeReceiver}-${currentUser.username}`; // Gemini is the sender here
+        if (!messages[chatKey]) messages[chatKey] = [];
+        messages[chatKey].push({ sender: activeReceiver, receiver: currentUser.username, type: 'text', content: replyText, timestamp: new Date().toISOString() });
+        saveMessages();
+        return replyText;
       } catch (e) {
-        return '❌ Gagal koneksi ke Gemini API';
+        console.error('Gemini API Error:', e);
+        return '❌ Gagal koneksi ke Gemini API atau terjadi kesalahan. Pastikan API key Anda benar.';
       }
     }
-  </script></body>
+
+    // --- Admin Functions ---
+    function showAdminStats() {
+      let statsDiv = document.getElementById('admin-stats');
+      let totalLogins = users.reduce((sum, u) => sum + u.stats.logins, 0);
+      let totalChatsSent = users.reduce((sum, u) => sum + u.stats.chatsSent, 0);
+      let totalChatsReceived = users.reduce((sum, u) => sum + u.stats.chatsReceived, 0);
+      
+      statsDiv.innerHTML = `
+        👥 Total Akun: <b>${users.length}</b><br>
+        🕒 Total Login: <b>${totalLogins}</b><br>
+        💬 Total Pesan Terkirim: <b>${totalChatsSent}</b><br>
+        📥 Total Pesan Diterima: <b>${totalChatsReceived}</b>
+      `;
+      statsDiv.style.display = 'block';
+    }
+
+    function showAllUserStats() {
+      openModal('Lihat Statistik Pengguna', `
+        <div style="max-height: 300px; overflow-y: auto;">
+          <table style="width:100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background-color: #f2f2f2;">
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Username</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Nama</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Role</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Login</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Kirim</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Terima</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Banned</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${users.map(u => `
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${u.username}</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${u.name}</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${u.role}</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${u.stats.logins}</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${u.stats.chatsSent}</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${u.stats.chatsReceived}</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${u.banned ? 'Yes' : 'No'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `, 'Tutup', null); // No confirm action needed for just viewing
+    }
+
+    function showBanUserModal() {
+      const userOptions = users.filter(u => u.username !== currentUser.username && u.role !== 'admin' && !u.banned)
+                               .map(u => `<option value="${u.username}">${u.name} (${u.username})</option>`).join('');
+      if (!userOptions) {
+        alert('Tidak ada pengguna yang bisa di-ban.');
+        return;
+      }
+      openModal('Ban Pengguna', `
+        <p>Pilih pengguna yang ingin Anda ban:</p>
+        <select id="ban-user-select" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px;">
+          ${userOptions}
+        </select>
+      `, 'Ban', () => {
+        const usernameToBan = document.getElementById('ban-user-select').value;
+        const userIndex = users.findIndex(u => u.username === usernameToBan);
+        if (userIndex > -1) {
+          users[userIndex].banned = true;
+          localStorage.setItem('users', JSON.stringify(users));
+          alert(`Pengguna ${usernameToBan} berhasil di-ban.`);
+          refreshUserList();
+          showAdminStats();
+        }
+        closeModal();
+      });
+    }
+
+    function showUnbanUserModal() {
+      const userOptions = users.filter(u => u.banned)
+                               .map(u => `<option value="${u.username}">${u.name} (${u.username})</option>`).join('');
+      if (!userOptions) {
+        alert('Tidak ada pengguna yang di-ban.');
+        return;
+      }
+      openModal('Unban Pengguna', `
+        <p>Pilih pengguna yang ingin Anda unban:</p>
+        <select id="unban-user-select" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px;">
+          ${userOptions}
+        </select>
+      `, 'Unban', () => {
+        const usernameToUnban = document.getElementById('unban-user-select').value;
+        const userIndex = users.findIndex(u => u.username === usernameToUnban);
+        if (userIndex > -1) {
+          users[userIndex].banned = false;
+          localStorage.setItem('users', JSON.stringify(users));
+          alert(`Pengguna ${usernameToUnban} berhasil di-unban.`);
+          refreshUserList();
+          showAdminStats();
+        }
+        closeModal();
+      });
+    }
+
+    function showDeleteUserModal() {
+      const userOptions = users.filter(u => u.username !== currentUser.username && u.role !== 'admin')
+                               .map(u => `<option value="${u.username}">${u.name} (${u.username})</option>`).join('');
+      if (!userOptions) {
+        alert('Tidak ada pengguna yang bisa dihapus.');
+        return;
+      }
+      openModal('Hapus Pengguna', `
+        <p><b>Peringatan:</b> Aksi ini tidak dapat dibatalkan. Pilih pengguna yang ingin Anda hapus:</p>
+        <select id="delete-user-select" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px;">
+          ${userOptions}
+        </select>
+      `, 'Hapus', () => {
+        const usernameToDelete = document.getElementById('delete-user-select').value;
+        const userIndex = users.findIndex(u => u.username === usernameToDelete);
+        if (userIndex > -1) {
+          if (confirm(`Anda yakin ingin menghapus pengguna ${usernameToDelete} beserta semua datanya?`)) {
+            users.splice(userIndex, 1);
+            // Also delete their chat history
+            for (const key in messages) {
+              if (key.includes(usernameToDelete)) {
+                delete messages[key];
+              }
+            }
+            localStorage.setItem('users', JSON.stringify(users));
+            saveMessages();
+            alert(`Pengguna ${usernameToDelete} berhasil dihapus.`);
+            refreshUserList();
+            showAdminStats();
+            if (activeReceiver === usernameToDelete) {
+                activeReceiver = null;
+                document.getElementById('chat-header').innerText = `Pilih Pengguna untuk Chat`;
+                document.getElementById('chat-messages').innerHTML = '';
+            }
+          }
+        }
+        closeModal();
+      });
+    }
+
+    // --- User Control Functions ---
+    function changeDisplayName() {
+      openModal('Ganti Nama Tampilan', `
+        <p>Nama tampilan Anda saat ini: <b>${currentUser.name}</b></p>
+        <input type="text" id="new-display-name" placeholder="Nama Tampilan Baru" value="${currentUser.name}" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px;">
+      `, 'Ganti', () => {
+        const newName = document.getElementById('new-display-name').value.trim();
+        if (newName && newName !== currentUser.name) {
+          currentUser.name = newName;
+          localStorage.setItem('users', JSON.stringify(users));
+          alert('Nama tampilan berhasil diganti.');
+          document.getElementById('chat-header').innerText = `Selamat Datang, ${currentUser.name}!`;
+          refreshUserList();
+        } else {
+          alert('Nama tampilan tidak boleh kosong atau sama dengan yang lama.');
+        }
+        closeModal();
+      });
+    }
+
+    function changePassword() {
+      openModal('Ganti Password', `
+        <input type="password" id="old-password" placeholder="Password Lama" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px;">
+        <input type="password" id="new-password" placeholder="Password Baru" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px;">
+        <input type="password" id="confirm-new-password" placeholder="Konfirmasi Password Baru" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px;">
+      `, 'Ganti', () => {
+        const oldPass = document.getElementById('old-password').value;
+        const newPass = document.getElementById('new-password').value;
+        const confirmNewPass = document.getElementById('confirm-new-password').value;
+
+        if (oldPass !== currentUser.password) {
+          alert('Password lama salah.');
+          return;
+        }
+        if (newPass.length < 6) {
+          alert('Password baru minimal 6 karakter.');
+          return;
+        }
+        if (newPass !== confirmNewPass) {
+          alert('Konfirmasi password baru tidak cocok.');
+          return;
+        }
+
+        currentUser.password = newPass;
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Password berhasil diganti.');
+        closeModal();
+      });
+    }
+
+    // --- Modal Functions ---
+    function openModal(title, bodyHtml, confirmText, onConfirm) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-body').innerHTML = bodyHtml;
+      const confirmBtn = document.getElementById('modal-confirm-btn');
+      confirmBtn.innerText = confirmText;
+      confirmBtn.onclick = onConfirm;
+      document.getElementById('modal-backdrop').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modal-backdrop').style.display = 'none';
+      document.getElementById('modal-body').innerHTML = ''; // Clear modal body content
+    }
+
+  </script>
+</body>
 </html>
