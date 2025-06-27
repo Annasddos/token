@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gemini Chat Premium</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
@@ -12,6 +12,8 @@
       background-size: 400% 400%;
       animation: gradient 20s ease infinite;
       color: #333;
+      height: 100vh;
+      overflow: hidden;
     }
     @keyframes gradient {
       0% {background-position: 0% 50%;}
@@ -47,6 +49,7 @@
       display: flex;
       flex-direction: row;
       height: 100vh;
+      display: none;
     }
     #user-list {
       width: 280px;
@@ -54,6 +57,7 @@
       padding: 20px;
       overflow-y: auto;
       border-right: 2px solid #ddd;
+      display: none;
     }
     #user-list ul li {
       background: #fff;
@@ -157,7 +161,7 @@
       <p class="link" onclick="toggleRegister(false)">Sudah punya akun? Login</p>
       <p id="reg-msg" style="color:red;text-align:center;"></p>
     </div>
-  </div>  <div id="chat-container" style="display:none">
+  </div>  <div id="chat-container">
     <div id="user-list">
       <h3>Pengguna</h3>
       <ul id="user-ul"></ul>
@@ -169,13 +173,13 @@
       <div id="chat-header">Chat</div>
       <div id="chat-messages"></div>
       <div id="chat-input">
-        <input id="msg-input" type="text" placeholder="Tulis pesan panjang yang menyenangkan...">
-        <input type="file" id="file-input" accept="image/*,audio/*">
+        <input id="msg-input" type="text" placeholder="Tulis pesan..."><input type="file" id="file-input" accept="image/*,audio/*">
         <button onclick="document.getElementById('file-input').click()"><i class="fas fa-paperclip"></i></button>
         <button onclick="sendMessage()">Kirim</button>
       </div>
     </div>
   </div>  <script>
+    Notification.requestPermission();
     let users = JSON.parse(localStorage.getItem('users')) || [
       { username: 'annas', password: 'annas', name: 'Admin', role: 'admin', stats: { logins: 0, chats: 0 } }
     ];
@@ -197,7 +201,6 @@
       localStorage.setItem('users', JSON.stringify(users));
       toggleRegister(false);
       alert('✅ Akun berhasil dibuat! Silakan login.');
-      refreshUserList();
     }
 
     function login() {
@@ -210,6 +213,7 @@
       localStorage.setItem('users', JSON.stringify(users));
       document.getElementById('auth-section').style.display = 'none';
       document.getElementById('chat-container').style.display = 'flex';
+      document.getElementById('user-list').style.display = 'block';
       document.getElementById('chat-header').innerText = `Chat sebagai ${user.name}`;
       refreshUserList();
       if (user.role === 'admin') showAdminStats();
@@ -254,6 +258,7 @@
         userDiv.className = 'msg-user';
         userDiv.innerText = msg;
         document.getElementById('chat-messages').appendChild(userDiv);
+        new Notification('📨 Pesan Dikirim!', { body: msg });
       }
 
       if (file) {
@@ -280,11 +285,7 @@
         botDiv.className = 'msg-bot';
         botDiv.innerText = reply;
         document.getElementById('chat-messages').appendChild(botDiv);
-      } else if (activeReceiver) {
-        const botDiv = document.createElement('div');
-        botDiv.className = 'msg-bot';
-        botDiv.innerText = `✅ Pesan dikirim ke ${activeReceiver}`;
-        document.getElementById('chat-messages').appendChild(botDiv);
+        new Notification('🤖 Gemini Membalas', { body: reply });
       }
       if (currentUser.role === 'admin') showAdminStats();
     }
