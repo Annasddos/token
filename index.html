@@ -1,35 +1,28 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gemini Chat App</title>
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      animation: gradientMove 10s ease infinite;
-      background-size: 400% 400%;
+      background: #f0f2f5;
     }
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .hidden {
+      display: none;
     }
-    .hidden { display: none; }
     #auth-container, #app-container {
-      width: 100%; max-width: 1200px; margin: auto;
+      width: 100%; max-width: 1000px; margin: auto;
       height: 100vh; display: flex; align-items: center; justify-content: center;
     }
-    #auth-container > div {
-      background: #fff; padding: 30px; border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.2); width: 90%; max-width: 400px;
-      animation: slideIn 1s ease;
-    }
-    @keyframes slideIn {
-      from { transform: translateY(50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+    #auth-container > div, #register-box {
+      background: #fff; padding: 30px; border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1); width: 90%; max-width: 400px;
     }
     h2 { margin-bottom: 20px; color: #333; }
     input {
@@ -41,33 +34,43 @@
       border: none; border-radius: 5px; cursor: pointer;
     }
     button:hover { background: #0056b3; }
-    .message { color: red; font-size: 0.9em; margin-bottom: 10px; }
+    .message { color: red; font-size: 0.9em; margin-top: -10px; margin-bottom: 10px; }
+    
     #app-container {
-      display: flex; flex-direction: row; height: 100vh;
+      display: flex; flex-direction: row;
+      height: 100vh;
     }
     #sidebar {
-      width: 280px; background: #fff; border-right: 1px solid #ccc;
+      width: 250px; background: #fff; border-right: 1px solid #ccc;
       padding: 20px; overflow-y: auto;
     }
-    #sidebar ul { list-style: none; padding: 0; }
+    #sidebar ul {
+      list-style: none; padding: 0;
+    }
     #sidebar li {
       padding: 10px; border-bottom: 1px solid #eee;
       cursor: pointer;
     }
     #chat-container {
       flex: 1; display: flex; flex-direction: column;
-      background: #f5f7fa;
+      background: #eaeff3;
     }
     #chat-header {
-      background: #007bff; color: white;
-      padding: 15px; font-weight: bold;
+      background: #fff; padding: 15px; font-weight: bold;
+      border-bottom: 1px solid #ccc;
     }
     #chat-messages {
       flex: 1; padding: 15px; overflow-y: auto;
     }
-    .msg { margin: 10px 0; }
-    .msg-user { text-align: right; color: #007bff; }
-    .msg-chatbot { text-align: left; color: #333; }
+    .msg {
+      margin: 10px 0;
+    }
+    .msg-user {
+      text-align: right; color: #007bff;
+    }
+    .msg-chatbot {
+      text-align: left; color: #333;
+    }
     #chat-input {
       display: flex; background: #fff; padding: 10px;
       border-top: 1px solid #ccc;
@@ -76,10 +79,6 @@
       flex: 1; padding: 10px; margin-right: 10px;
       border: 1px solid #ccc; border-radius: 5px;
     }
-    #chat-input input[type="file"] {
-      margin-right: 10px;
-    }
-    #status-info { font-size: 0.85em; color: #666; margin-top: 15px; }
     @media (max-width: 768px) {
       #app-container { flex-direction: column; }
       #sidebar { width: 100%; border-right: none; border-bottom: 1px solid #ccc; }
@@ -105,78 +104,77 @@
       <p>Sudah punya akun? <a href="#" id="link-login">Masuk</a></p>
       <p class="message" id="register-message"></p>
     </div>
-  </div>  <div id="app-container" class="hidden">
+  </div>
+
+  <div id="app-container" class="hidden">
     <div id="sidebar">
-      <h3>Pengguna Aktif</h3>
+      <h3>Pengguna</h3>
       <ul id="users-list"></ul>
-      <p id="status-info"></p>
       <button id="btn-logout">Logout</button>
     </div>
     <div id="chat-container">
-      <div id="chat-header">Chat</div>
+      <div id="chat-header">Pilih pengguna</div>
       <div id="chat-messages"></div>
       <div id="chat-input">
-        <input type="file" id="file-input" accept="image/*,audio/*" />
         <input type="text" id="text-input" placeholder="Tulis pesan..." />
         <button id="btn-send">Kirim</button>
       </div>
     </div>
-  </div>  <script>
-    const users = [
-      { name: 'Admin', username: 'annas', password: 'annas', role: 'admin', loginAt: null }
-    ];
+  </div>
+
+  <script>
+    const users = [{ name: 'Admin', username:'annas', password:'annas', role:'admin'}];
     let currentUser = null;
     let activeChatUser = null;
 
-    const \$ = id => document.getElementById(id);
+    function $(id){ return document.getElementById(id); }
 
-    \$('link-register').onclick = () => {
-      \$('register-box').classList.remove('hidden');
-      \$('login-box').classList.add('hidden');
+    $('link-register').onclick = () => {
+      $('register-box').classList.remove('hidden');
+      $('login-box').classList.add('hidden');
     };
-    \$('link-login').onclick = () => {
-      \$('login-box').classList.remove('hidden');
-      \$('register-box').classList.add('hidden');
+    $('link-login').onclick = () => {
+      $('login-box').classList.remove('hidden');
+      $('register-box').classList.add('hidden');
     };
 
-    \$('btn-register').onclick = () => {
-      const name = \$('reg-name').value.trim();
-      const username = \$('reg-username').value.trim();
-      const password = \$('reg-password').value;
+    $('btn-register').onclick = () => {
+      const name = $('reg-name').value.trim();
+      const username = $('reg-username').value.trim();
+      const password = $('reg-password').value;
       if (!name || !username || !password) {
-        \$('register-message').textContent = 'Semua kolom wajib diisi';
+        $('register-message').textContent = 'Semua kolom wajib diisi';
         return;
       }
-      if (users.find(u => u.username === username)) {
-        \$('register-message').textContent = 'Username sudah digunakan';
+      if (users.find(u=>u.username===username)) {
+        $('register-message').textContent = 'Username sudah digunakan';
         return;
       }
-      users.push({ name, username, password, role: 'user', loginAt: null });
-      \$('register-message').textContent = 'Registrasi berhasil, silakan login';
+      users.push({ name, username, password, role: 'user' });
+      $('register-message').textContent = 'Registrasi berhasil, silakan login';
     };
 
-    \$('btn-login').onclick = () => {
-      const u = users.find(u => u.username === \$('login-username').value && u.password === \$('login-password').value);
+    $('btn-login').onclick = () => {
+      const u = users.find(u => u.username === $('login-username').value && u.password === $('login-password').value);
       if (!u) {
-        \$('login-message').textContent = 'Username atau password salah';
+        $('login-message').textContent = 'Username atau password salah';
         return;
       }
-      u.loginAt = new Date();
       currentUser = u;
-      \$('auth-container').classList.add('hidden');
-      \$('app-container').classList.remove('hidden');
+      $('auth-container').classList.add('hidden');
+      $('app-container').classList.remove('hidden');
       refreshUserList();
     };
 
-    \$('btn-logout').onclick = () => {
+    $('btn-logout').onclick = () => {
       currentUser = null;
       activeChatUser = null;
-      \$('app-container').classList.add('hidden');
-      \$('auth-container').classList.remove('hidden');
+      $('app-container').classList.add('hidden');
+      $('auth-container').classList.remove('hidden');
     };
 
     function refreshUserList() {
-      const ul = \$('users-list');
+      const ul = $('users-list');
       ul.innerHTML = '';
       users.forEach(u => {
         if (u.username !== currentUser.username || currentUser.role === 'admin') {
@@ -186,56 +184,32 @@
           ul.appendChild(li);
         }
       });
-      if (currentUser.role === 'admin') {
-        const total = users.length;
-        const onlineUsers = users.filter(u => u.loginAt).length;
-        const usageStats = users.map(u => {
-          if (!u.loginAt) return `${u.username}: offline`;
-          const mins = Math.floor((Date.now() - new Date(u.loginAt)) / 60000);
-          return `${u.username}: ${mins} menit online`;
-        }).join('\n');
-        \$('status-info').textContent = `Total: ${total}, Online: ${onlineUsers}\n${usageStats}`;
-      }
     }
 
     function startChat(user) {
       activeChatUser = user;
-      \$('chat-header').textContent = `Chat dengan ${user.name}`;
-      \$('chat-messages').innerHTML = '';
+      $('chat-header').textContent = `Chat dengan ${user.name}`;
+      $('chat-messages').innerHTML = '';
     }
 
-    \$('btn-send').onclick = async () => {
-      const text = \$('text-input').value.trim();
-      const file = \$('file-input').files[0];
-      if (!text && !file || !activeChatUser) return;
-      if (text) {
-        addMessage('msg-user', text);
-        if (activeChatUser.username === 'annas' || currentUser.username === 'annas') {
-          addMessage('msg-chatbot', `Pesan dikirim ke ${activeChatUser.name}`);
-        } else {
-          const reply = await getGeminiResponse(text);
-          addMessage('msg-chatbot', reply);
-        }
-        \$('text-input').value = '';
-      }
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const tag = file.type.startsWith('image') ? 'img' : 'audio';
-          const html = `<${tag} src="${e.target.result}" ${tag === 'audio' ? 'controls' : 'style="max-width:200px;"'}>`;
-          addMessage('msg-user', html);
-        };
-        reader.readAsDataURL(file);
-        \$('file-input').value = '';
-      }
+    $('btn-send').onclick = async () => {
+      const text = $('text-input').value.trim();
+      if (!text || !activeChatUser) return;
+
+      addMessage('msg-user', text);
+      $('text-input').value = '';
+
+      // Kirim ke Gemini API
+      const reply = await getGeminiResponse(text);
+      addMessage('msg-chatbot', reply);
     };
 
-    function addMessage(cls, content) {
+    function addMessage(cls, msg) {
       const div = document.createElement('div');
       div.className = 'msg ' + cls;
-      div.innerHTML = content;
-      \$('chat-messages').appendChild(div);
-      \$('chat-messages').scrollTop = \$('chat-messages').scrollHeight;
+      div.textContent = msg;
+      $('chat-messages').appendChild(div);
+      $('chat-messages').scrollTop = $('chat-messages').scrollHeight;
     }
 
     async function getGeminiResponse(prompt) {
@@ -243,13 +217,16 @@
         const res = await fetch('https://generativelanguage.googleapis.com/v1beta3/models/gemini-pro:generateContent?key=AIzaSyBFmdB7Z3In8onU6uPcoH1xwQwqJA11mKM', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
         });
         const data = await res.json();
         return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Gagal membalas';
       } catch (err) {
-        return 'Error saat menghubungi Gemini API';
+        return 'Terjadi kesalahan saat menghubungi Gemini';
       }
     }
-  </script></body>
+  </script>
+</body>
 </html>
