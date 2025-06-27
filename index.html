@@ -15,15 +15,14 @@
     }
 
     :root {
-      --primary-color: #6a11cb;
-      --secondary-color: #2575fc;
-      --gradient-start: #ee7752;
-      --gradient-middle: #e73c7e;
-      --gradient-end: #23a6d5;
+      --primary-color: #075E54; /* WhatsApp Green Dark */
+      --secondary-color: #128C7E; /* WhatsApp Green Light */
+      --whatsapp-bg: #ECE5DD; /* WhatsApp Chat Background */
+      --whatsapp-bubble-received: #FFFFFF;
+      --whatsapp-bubble-sent: #DCF8C6;
       --text-dark: #333;
       --text-light: #fff;
-      --bg-light: rgba(255, 255, 255, 0.95);
-      --bg-dark: rgba(0, 0, 0, 0.7);
+      --bg-light: rgba(255, 255, 255, 0.98);
       --border-light: #e0e0e0;
       --shadow-light: rgba(0, 0, 0, 0.15);
       --shadow-heavy: rgba(0, 0, 0, 0.35);
@@ -32,11 +31,13 @@
       --danger-color: #dc3545;
       --warning-color: #ffc107;
       --info-color: #007bff;
+      --gemini-color: #4CAF50;
+      --admin-badge: #00BFFF; /* Deep sky blue for admin checkmark */
     }
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(-45deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end), var(--primary-color));
+      background: linear-gradient(-45deg, #075E54, #128C7E, #34B7F1, #25D366); /* WhatsApp-like gradient */
       background-size: 400% 400%;
       animation: gradientBG 25s ease infinite;
       color: var(--text-dark);
@@ -94,7 +95,8 @@
     input[type="text"],
     input[type="password"],
     input[type="email"],
-    input[type="number"] {
+    input[type="number"],
+    textarea {
       width: 100%;
       padding: 20px 25px;
       margin: 18px 0;
@@ -105,12 +107,15 @@
       transition: all 0.4s ease;
       box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.08);
       font-family: 'Montserrat', sans-serif;
+      resize: vertical;
+      min-height: 60px; /* For textarea */
     }
 
     input[type="text"]:focus,
     input[type="password"]:focus,
     input[type="email"]:focus,
-    input[type="number"]:focus {
+    input[type="number"]:focus,
+    textarea:focus {
       border-color: var(--secondary-color);
       box-shadow: 0 0 0 5px rgba(37, 117, 252, 0.3);
       outline: none;
@@ -212,7 +217,7 @@
     /* ---------------------------------- User List ---------------------------------- */
     #user-list {
       width: 350px;
-      background: #eef2f7;
+      background: #f0f2f5; /* WhatsApp-like sidebar */
       padding: 30px;
       overflow-y: auto;
       border-right: 2px solid var(--border-light);
@@ -225,17 +230,23 @@
 
     #user-list h3 {
       font-size: 2.1em;
-      color: var(--text-dark);
+      color: var(--primary-color);
       margin-bottom: 30px;
       font-weight: 800;
       position: sticky;
       top: 0;
-      background: #eef2f7;
+      background: #f0f2f5;
       padding-bottom: 15px;
       z-index: 10;
       border-bottom: 2px solid var(--border-light);
-      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+    #user-list h3 i {
+        color: var(--secondary-color);
+    }
+
 
     #user-list ul {
       list-style: none;
@@ -262,7 +273,7 @@
     }
 
     #user-list ul li:hover {
-      background: #d8eaff;
+      background: #e9f0f7; /* Lighter hover for WhatsApp feel */
       transform: translateY(-5px) scale(1.02);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
       border: 1px solid var(--secondary-color);
@@ -275,21 +286,9 @@
       transform: translateY(-3px) scale(1.01);
     }
 
-    #user-list ul li.active::before {
-      content: '\f00c'; /* Checkmark icon */
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 1.2em;
-    }
-
     #user-list .user-avatar {
-      width: 45px;
-      height: 45px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background-color: #ccc;
       margin-right: 15px;
@@ -298,20 +297,47 @@
       align-items: center;
       color: var(--text-light);
       font-weight: 700;
-      font-size: 1.1em;
+      font-size: 1.2em;
       flex-shrink: 0;
-      border: 2px solid rgba(255, 255, 255, 0.5);
+      border: 3px solid rgba(255, 255, 255, 0.5);
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      background: linear-gradient(45deg, #FFC14F, #FF6B6B);
+      background: linear-gradient(45deg, #8BC34A, #CDDC39); /* Greenish-yellow avatars */
     }
 
     #user-list ul li.active .user-avatar {
       background: var(--text-light);
       color: var(--primary-color);
     }
+
+    #user-list ul li .user-info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    #user-list ul li .user-name {
+        font-weight: 700;
+        font-size: 1.1em;
+        display: flex;
+        align-items: center;
+    }
+    #user-list ul li .user-name .admin-badge {
+        color: var(--admin-badge);
+        font-size: 0.9em;
+        margin-left: 8px;
+        filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+    }
+    #user-list ul li .user-username {
+        font-size: 0.85em;
+        color: #777;
+        margin-top: 2px;
+        font-weight: 500;
+    }
+    #user-list ul li.active .user-username {
+        color: rgba(255, 255, 255, 0.8);
+    }
     
     #user-list .gemini-ai-link {
-      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      background: linear-gradient(90deg, var(--gemini-color), #66BB6A);
       color: var(--text-light);
       font-weight: 700;
       margin-top: 25px;
@@ -328,7 +354,7 @@
     }
 
     #user-list .gemini-ai-link:hover {
-      background: linear-gradient(90deg, #8BC34A, #4CAF50);
+      background: linear-gradient(90deg, #66BB6A, var(--gemini-color));
       transform: translateY(-5px) scale(1.02);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
@@ -349,50 +375,64 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: var(--text-light);
+      background: var(--whatsapp-bg); /* WhatsApp chat background */
       position: relative;
     }
 
     #chat-header {
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      background: var(--primary-color); /* WhatsApp Green Dark */
       color: var(--text-light);
-      padding: 25px 30px;
+      padding: 20px 30px;
       font-weight: bold;
-      font-size: 2.1em;
+      font-size: 1.8em;
       text-align: left;
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
       position: relative;
       overflow: hidden;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       flex-shrink: 0;
     }
 
-    #chat-header::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: rgba(255, 255, 255, 0.1);
-      transform: rotate(30deg);
-      animation: headerShine 4s infinite linear;
+    #chat-header .chat-partner-info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        margin-left: 15px;
     }
 
-    @keyframes headerShine {
-      0% { transform: rotate(30deg) translate(-50%, -50%); }
-      100% { transform: rotate(30deg) translate(50%, 50%); }
+    #chat-header .chat-partner-name {
+        font-size: 1.2em;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    #chat-header .chat-partner-status {
+        font-size: 0.8em;
+        font-weight: 400;
+        opacity: 0.9;
+    }
+    #chat-header .chat-partner-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.3em;
+        flex-shrink: 0;
+        border: 2px solid rgba(255, 255, 255, 0.5);
     }
 
-    #chat-header span {
-      flex-grow: 1;
-    }
 
     #chat-header .chat-options {
       display: flex;
-      gap: 15px;
+      gap: 10px; /* Reduced gap */
+      margin-left: auto; /* Push to right */
     }
 
     #chat-header .chat-options button {
@@ -405,134 +445,180 @@
       transition: background-color 0.3s ease, transform 0.2s ease;
       box-shadow: none;
       margin: 0;
-      width: auto;
+      width: 45px; /* Fixed size for circular buttons */
+      height: 45px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
     }
 
     #chat-header .chat-options button:hover {
       background: rgba(255, 255, 255, 0.2);
       transform: scale(1.1);
     }
+    #chat-header .admin-badge {
+        color: var(--admin-badge);
+        font-size: 1em;
+        filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+    }
+
 
     #chat-messages {
       flex: 1;
       padding: 25px 30px;
       overflow-y: auto;
-      background: #f9fafc;
+      background: var(--whatsapp-bg);
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 8px; /* Reduced gap for more compact WA-like messages */
       scroll-behavior: smooth;
+      background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* WA chat background pattern */
+      background-size: contain;
+      background-repeat: repeat;
     }
+    #chat-messages::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px; /* Gradient fade at top */
+        background: linear-gradient(to bottom, rgba(236,229,221,1), rgba(236,229,221,0));
+        z-index: 5;
+        pointer-events: none;
+    }
+    #chat-messages::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px; /* Gradient fade at bottom */
+        background: linear-gradient(to top, rgba(236,229,221,1), rgba(236,229,221,0));
+        z-index: 5;
+        pointer-events: none;
+    }
+
 
     /* ---------------------------------- Message Bubbles ---------------------------------- */
     .msg-bubble {
       margin: 0;
-      padding: 16px 22px;
-      max-width: 70%;
-      border-radius: 25px;
+      padding: 9px 12px;
+      max-width: 75%; /* Increased max width */
+      border-radius: 8px; /* WA-like sharp corners */
       word-wrap: break-word;
-      font-size: 1.05em;
-      line-height: 1.5;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      font-size: 0.95em;
+      line-height: 1.3;
+      box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13); /* Softer shadow */
       position: relative;
-      animation: fadeInMessage 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      animation: fadeInMessage 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
       transform-origin: bottom;
     }
 
     @keyframes fadeInMessage {
-      from { opacity: 0; transform: translateY(15px) scale(0.95); }
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .msg-user {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      color: var(--text-light);
+      background: var(--whatsapp-bubble-sent);
+      color: var(--text-dark);
       align-self: flex-end;
       text-align: right;
-      border-bottom-right-radius: 8px;
+      border-bottom-right-radius: 0; /* Sharp corner for WA */
       margin-left: auto; /* Push to right */
     }
 
     .msg-bot {
-      background: #e0f7fa; /* Cyan light for bot */
+      background: var(--whatsapp-bubble-received);
       color: var(--text-dark);
       align-self: flex-start;
-      border-bottom-left-radius: 8px;
+      border-bottom-left-radius: 0; /* Sharp corner for WA */
       margin-right: auto; /* Push to left */
     }
 
+    /* WhatsApp-like message tails */
     .msg-user::after {
       content: '';
       position: absolute;
-      bottom: 0;
-      right: -8px; /* Adjusted for larger radius */
-      width: 15px;
-      height: 15px;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      top: 0; /* Changed from bottom to top for WA-like tail */
+      right: -8px;
+      width: 12px;
+      height: 19px;
+      background: var(--whatsapp-bubble-sent);
       border-bottom-left-radius: 100%;
+      border-top-right-radius: 0;
+      border-top-left-radius: 100%; /* For curve */
+      transform: rotate(20deg) skewX(20deg); /* Adjust for tail shape */
       z-index: -1;
+      box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13); /* Shadow on tail */
     }
 
     .msg-bot::after {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: -8px; /* Adjusted for larger radius */
-      width: 15px;
-      height: 15px;
-      background: #e0f7fa;
+      top: 0; /* Changed from bottom to top for WA-like tail */
+      left: -8px;
+      width: 12px;
+      height: 19px;
+      background: var(--whatsapp-bubble-received);
       border-bottom-right-radius: 100%;
+      border-top-left-radius: 0;
+      border-top-right-radius: 100%; /* For curve */
+      transform: rotate(-20deg) skewX(-20deg); /* Adjust for tail shape */
       z-index: -1;
+      box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13); /* Shadow on tail */
     }
 
     .msg-bubble img,
     .msg-bubble audio,
     .msg-bubble video {
       max-width: 100%;
-      border-radius: 15px;
+      border-radius: 8px;
       display: block;
-      margin-top: 10px;
+      margin-top: 5px; /* Reduced margin */
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .msg-timestamp {
-      font-size: 0.75em;
-      color: rgba(255, 255, 255, 0.7);
-      margin-top: 5px;
+      font-size: 0.7em; /* Smaller timestamp */
+      color: #888; /* Darker for readability */
+      margin-top: 4px; /* Reduced margin */
       display: block;
-      opacity: 0.8;
+      opacity: 0.9;
     }
-    .msg-bot .msg-timestamp {
-      color: rgba(0, 0, 0, 0.5);
+    .msg-user .msg-timestamp {
+      color: #666; /* Darker for sent bubble */
     }
 
     /* ---------------------------------- Chat Input ---------------------------------- */
     #chat-input {
       display: flex;
-      padding: 20px 30px;
-      background: var(--text-light);
+      padding: 10px 15px; /* Reduced padding */
+      background: #f0f2f5; /* WhatsApp input background */
       border-top: 1px solid var(--border-light);
-      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05);
       align-items: center;
-      gap: 15px;
+      gap: 8px; /* Reduced gap */
       flex-shrink: 0;
     }
 
     #chat-input input[type="text"] {
       flex: 1;
-      padding: 18px 25px;
-      border-radius: 30px;
-      border: 1px solid var(--border-light);
-      font-size: 1.15em;
-      background-color: var(--input-bg);
+      padding: 12px 18px; /* Reduced padding */
+      border-radius: 25px; /* WA-like input shape */
+      border: 1px solid #ccc;
+      font-size: 1em;
+      background-color: var(--text-light);
       transition: all 0.3s ease;
-      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.08);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
       font-family: 'Montserrat', sans-serif;
     }
 
     #chat-input input[type="text"]:focus {
       border-color: var(--secondary-color);
-      box-shadow: 0 0 0 5px rgba(37, 117, 252, 0.2);
+      box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
       outline: none;
     }
 
@@ -541,16 +627,16 @@
     }
 
     #chat-input button {
-      padding: 18px 22px;
-      border-radius: 50%; /* Circle buttons */
-      font-size: 1.3em;
+      padding: 0;
+      border-radius: 50%;
+      font-size: 1.2em;
       margin: 0;
-      width: 60px; /* Fixed width/height for circle */
-      height: 60px;
-      background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+      width: 48px; /* Fixed size for circle buttons */
+      height: 48px;
+      background: var(--primary-color);
       color: var(--text-light);
       border: none;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       display: flex;
       justify-content: center;
@@ -559,15 +645,16 @@
     }
 
     #chat-input button:hover {
-      transform: scale(1.1) rotate(5deg);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      transform: scale(1.05) rotate(5deg);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      background: var(--secondary-color);
     }
 
     #chat-input button.send-button {
-        background: linear-gradient(45deg, var(--primary-color), var(--gradient-end));
+        background: var(--secondary-color);
     }
     #chat-input button.send-button:hover {
-        background: linear-gradient(45deg, var(--gradient-end), var(--primary-color));
+        background: var(--primary-color);
     }
 
     /* ---------------------------------- Controls Panel ---------------------------------- */
@@ -586,11 +673,10 @@
     .controls-panel h4 {
       font-size: 1.4em;
       margin-bottom: 15px;
-      color: var(--text-dark);
+      color: var(--primary-color);
       border-bottom: 2px solid var(--border-light);
       padding-bottom: 10px;
       font-weight: 700;
-      color: var(--primary-color);
     }
 
     .controls-panel button {
@@ -616,6 +702,8 @@
     .controls-panel button.success { background: var(--success-color); }
     .controls-panel button.warning { background: var(--warning-color); }
     .controls-panel button.info { background: var(--info-color); }
+    .controls-panel button.default { background: #6c757d; } /* Grey for general actions */
+
 
     .controls-panel button:hover {
       transform: translateY(-3px) scale(1.01);
@@ -689,7 +777,7 @@
       color: #555;
     }
 
-    #modal-body input {
+    #modal-body input, #modal-body textarea {
       margin-bottom: 10px;
     }
 
@@ -720,8 +808,8 @@
     }
 
     #modal-actions button.cancel-btn { background: #6c757d; }
-    #modal-actions button.confirm-btn { background: linear-gradient(45deg, var(--info-color), var(--primary-color)); }
-    #modal-actions button.confirm-btn:hover { background: linear-gradient(45deg, var(--primary-color), var(--info-color)); }
+    #modal-actions button.confirm-btn { background: var(--secondary-color); }
+    #modal-actions button.confirm-btn:hover { background: var(--primary-color); }
 
     /* ---------------------------------- Responsive Design ---------------------------------- */
     @media (max-width: 992px) {
@@ -729,79 +817,90 @@
         width: 300px;
       }
       #chat-header {
-        font-size: 1.8em;
-        padding: 20px;
+        font-size: 1.6em;
+        padding: 15px 25px;
+      }
+      #chat-header .chat-options button {
+        font-size: 1.2em;
+        width: 40px;
+        height: 40px;
       }
       #chat-input input[type="text"] {
-        padding: 15px 20px;
-        font-size: 1em;
+        padding: 10px 15px;
+        font-size: 0.95em;
       }
       #chat-input button {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         font-size: 1.1em;
       }
       .msg-bubble {
-        padding: 14px 20px;
-        font-size: 1em;
+        padding: 8px 10px;
+        font-size: 0.9em;
       }
     }
 
     @media (max-width: 768px) {
       body {
         align-items: flex-start;
-        padding-top: 20px;
+        padding-top: 10px;
       }
       .card {
-        padding: 35px;
-        margin: 20px auto;
+        padding: 30px;
+        margin: 10px auto;
         width: 95%;
-        border-radius: 25px;
+        border-radius: 20px;
       }
       .card h2 {
-        font-size: 2em;
-        margin-bottom: 25px;
+        font-size: 1.8em;
+        margin-bottom: 20px;
       }
-      input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
-        padding: 16px 20px;
-        margin: 15px 0;
-        font-size: 1em;
-        border-radius: 12px;
+      input[type="text"], input[type="password"], textarea {
+        padding: 14px 18px;
+        margin: 10px 0;
+        font-size: 0.95em;
+        border-radius: 10px;
       }
       button {
-        padding: 16px;
+        padding: 14px;
         font-size: 1.1em;
-        border-radius: 12px;
-        margin-top: 20px;
+        border-radius: 10px;
+        margin-top: 15px;
       }
 
       #chat-container {
         flex-direction: column;
         height: 98vh;
         width: 98vw;
-        border-radius: 20px;
+        border-radius: 15px;
       }
       #user-list {
         width: 100%;
-        height: 280px; /* Fixed height for user list on small screens */
+        height: 250px; /* Fixed height for user list on small screens */
         border-right: none;
         border-bottom: 2px solid var(--border-light);
-        padding: 20px;
+        padding: 15px;
       }
       #user-list h3 {
-        font-size: 1.6em;
-        margin-bottom: 20px;
+        font-size: 1.5em;
+        margin-bottom: 15px;
       }
       #user-list ul li {
-        padding: 15px 20px;
-        margin-bottom: 12px;
-        font-size: 1em;
-        border-radius: 15px;
+        padding: 12px 18px;
+        margin-bottom: 10px;
+        font-size: 0.95em;
+        border-radius: 12px;
+      }
+      #user-list .user-avatar {
+          width: 40px;
+          height: 40px;
+          font-size: 1em;
+          margin-right: 12px;
       }
       #user-list .gemini-ai-link {
         padding: 15px 20px;
         font-size: 1em;
-        margin-top: 20px;
+        margin-top: 15px;
         border-radius: 15px;
       }
 
@@ -809,48 +908,60 @@
         flex: 1;
       }
       #chat-header {
-        font-size: 1.6em;
-        padding: 18px 25px;
+        font-size: 1.4em;
+        padding: 12px 20px;
+      }
+      #chat-header .chat-partner-avatar {
+          width: 45px;
+          height: 45px;
+          font-size: 1.2em;
+      }
+      #chat-header .chat-partner-name {
+          font-size: 1.1em;
+      }
+      #chat-header .chat-partner-status {
+          font-size: 0.75em;
       }
       #chat-header .chat-options button {
-        font-size: 1.2em;
-        padding: 6px;
+        font-size: 1.1em;
+        width: 38px;
+        height: 38px;
       }
       #chat-messages {
-        padding: 15px 20px;
-        gap: 10px;
+        padding: 10px 15px;
+        gap: 6px;
       }
       .msg-bubble {
         max-width: 90%;
-        padding: 12px 18px;
-        font-size: 0.95em;
-        border-radius: 20px;
+        padding: 8px 10px;
+        font-size: 0.85em;
+        border-radius: 8px;
       }
       .msg-user::after, .msg-bot::after {
-        width: 12px;
-        height: 12px;
-        left: -6px;
+        width: 10px;
+        height: 16px;
         right: -6px;
+        left: -6px;
       }
       #chat-input {
         flex-wrap: wrap;
-        padding: 15px 20px;
-        gap: 10px;
+        padding: 8px 12px;
+        gap: 6px;
       }
       #chat-input input[type="text"] {
         flex-basis: 100%;
         margin-bottom: 5px;
-        padding: 14px 18px;
-        border-radius: 25px;
+        padding: 10px 15px;
+        border-radius: 20px;
       }
       #chat-input button {
-        width: 45px;
-        height: 45px;
-        font-size: 1.05em;
+        width: 40px;
+        height: 40px;
+        font-size: 1em;
         padding: 0;
       }
       #modal-content {
-        padding: 30px;
+        padding: 25px;
         border-radius: 20px;
       }
       #modal-title {
@@ -859,38 +970,49 @@
       }
       #modal-actions button {
         padding: 10px 20px;
-        font-size: 0.95em;
+        font-size: 0.9em;
         border-radius: 10px;
       }
     }
     @media (max-width: 480px) {
       .card {
-        padding: 25px;
+        padding: 20px;
       }
       .card h2 {
-        font-size: 1.8em;
+        font-size: 1.6em;
       }
-      input[type="text"], input[type="password"] {
-        padding: 14px 18px;
+      input[type="text"], input[type="password"], textarea {
+        padding: 12px 15px;
       }
       button {
-        padding: 14px;
+        padding: 12px;
         font-size: 1em;
       }
       #user-list h3 {
-        font-size: 1.4em;
+        font-size: 1.3em;
       }
       #user-list ul li, #user-list .gemini-ai-link {
-        font-size: 0.95em;
-        padding: 12px 15px;
+        font-size: 0.9em;
+        padding: 10px 12px;
       }
       #chat-header {
-        font-size: 1.4em;
-        padding: 15px 20px;
+        font-size: 1.2em;
+        padding: 10px 15px;
+      }
+      #chat-header .chat-partner-avatar {
+          width: 40px;
+          height: 40px;
+          font-size: 1.1em;
+      }
+      #chat-header .chat-partner-name {
+          font-size: 1em;
+      }
+      #chat-header .chat-partner-status {
+          font-size: 0.7em;
       }
       #chat-input button {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         font-size: 0.9em;
       }
     }
@@ -908,9 +1030,10 @@
     </div>
     <div class="register-form card" id="register-card" style="display:none">
       <h2>Buat Akun Baru</h2>
-      <input id="reg-name" type="text" placeholder="Nama Lengkap Anda">
-      <input id="reg-username" type="text" placeholder="Username Pilihan">
-      <input id="reg-password" type="password" placeholder="Password Kuat">
+      <input id="reg-display-name" type="text" placeholder="Nama Panggilan/Tampilan Anda">
+      <input id="reg-username" type="text" placeholder="Username (misal: @nama_Anda)">
+      <input id="reg-password" type="password" placeholder="Password Kuat (min 6 karakter)">
+      <textarea id="reg-bio" placeholder="Tulis bio singkat Anda (Opsional)"></textarea>
       <button onclick="register()">Daftar</button>
       <p class="link" onclick="toggleRegister(false)">Sudah punya akun? Login</p>
       <p id="reg-msg" class="message"></p>
@@ -919,7 +1042,7 @@
 
   <div id="chat-container">
     <div id="user-list">
-      <h3>Pengguna Online</h3>
+      <h3><i class="fas fa-comments"></i> Chat Pengguna</h3>
       <ul id="user-ul"></ul>
       <hr>
       <p class="gemini-ai-link" onclick="startChat('gemini')"><i class="fas fa-robot"></i> Chat dengan Gemini AI</p>
@@ -928,13 +1051,13 @@
         <h4><i class="fas fa-user-shield"></i> Kontrol Admin</h4>
         <button class="info" onclick="showAllUserStats()"><i class="fas fa-chart-line"></i> Statistik Pengguna</button>
         <button class="warning" onclick="showBanUserModal()"><i class="fas fa-user-slash"></i> Kelola Ban Pengguna</button>
-        <button class="danger" onclick="showDeleteUserModal()"><i class="fas fa-user-minus"></i> Hapus Pengguna</button>
+        <button class="danger" onclick="showDeleteUserModal()"><i class="fas fa-user-times"></i> Hapus Pengguna Permanen</button>
         <div id="admin-stats" class="stats"></div>
       </div>
 
       <div class="controls-panel" id="user-controls-panel" style="display:none;">
         <h4><i class="fas fa-user-cog"></i> Pengaturan Akun</h4>
-        <button class="success" onclick="changeDisplayName()"><i class="fas fa-signature"></i> Ganti Nama Tampilan</button>
+        <button class="default" onclick="showEditProfileModal()"><i class="fas fa-user-edit"></i> Edit Profil & Bio</button>
         <button class="info" onclick="changePassword()"><i class="fas fa-key"></i> Ganti Password</button>
         <button class="danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
       </div>
@@ -942,11 +1065,14 @@
 
     <div id="chat-box">
       <div id="chat-header">
-        <span>Pilih Pengguna untuk Chat</span>
+        <div class="chat-partner-avatar" id="chat-partner-avatar"></div>
+        <div class="chat-partner-info">
+            <span class="chat-partner-name" id="chat-partner-name">Pilih Pengguna untuk Chat</span>
+            <span class="chat-partner-status" id="chat-partner-status"></span>
+        </div>
         <div class="chat-options">
           <button title="Panggilan Video (Simulasi)" onclick="showCallModal('video')"><i class="fas fa-video"></i></button>
           <button title="Panggilan Suara (Simulasi)" onclick="showCallModal('audio')"><i class="fas fa-phone"></i></button>
-          <button title="Lihat Profil (Simulasi)" onclick="showProfileModal()"><i class="fas fa-info-circle"></i></button>
         </div>
       </div>
       <div id="chat-messages"></div>
@@ -976,7 +1102,7 @@
 
     // Initial user data. Annas is admin.
     let users = JSON.parse(localStorage.getItem('users')) || [
-      { username: 'annas', password: 'annas', name: 'Admin Annas', role: 'admin', banned: false, stats: { logins: 0, chatsSent: 0, chatsReceived: 0 } }
+      { username: 'annas', password: 'annas', displayName: 'Admin Annas', bio: 'Saya adalah Administrator.', role: 'admin', banned: false, stats: { logins: 0, chatsSent: 0, chatsReceived: 0 } }
     ];
     let currentUser = null;
     let activeReceiver = null;
@@ -1004,24 +1130,32 @@
     }
 
     function register() {
-      const name = document.getElementById('reg-name').value.trim();
+      const displayName = document.getElementById('reg-display-name').value.trim();
       const username = document.getElementById('reg-username').value.trim();
       const password = document.getElementById('reg-password').value.trim();
+      const bio = document.getElementById('reg-bio').value.trim();
 
-      if (!name || !username || !password) {
-        return document.getElementById('reg-msg').innerText = '⚠️ Semua kolom harus diisi.';
+      if (!displayName || !username || !password) {
+        return document.getElementById('reg-msg').innerText = '⚠️ Nama panggilan, username & password harus diisi.';
+      }
+      if (!username.startsWith('@')) {
+        return document.getElementById('reg-msg').innerText = '⚠️ Username harus diawali dengan simbol "@" (contoh: @nama_Anda).';
+      }
+      if (password.length < 6) {
+        return document.getElementById('reg-msg').innerText = '⚠️ Password minimal 6 karakter.';
       }
       if (users.find(u => u.username === username)) {
         return document.getElementById('reg-msg').innerText = '⚠️ Username sudah digunakan.';
       }
 
-      users.push({ username, password, name, role: 'user', banned: false, stats: { logins: 0, chatsSent: 0, chatsReceived: 0 } });
+      users.push({ username, password, displayName, bio, role: 'user', banned: false, stats: { logins: 0, chatsSent: 0, chatsReceived: 0 } });
       localStorage.setItem('users', JSON.stringify(users));
       toggleRegister(false);
       alert('✅ Akun berhasil dibuat! Silakan login.');
-      document.getElementById('reg-name').value = '';
+      document.getElementById('reg-display-name').value = '';
       document.getElementById('reg-username').value = '';
       document.getElementById('reg-password').value = '';
+      document.getElementById('reg-bio').value = '';
     }
 
     function login() {
@@ -1043,7 +1177,8 @@
       document.getElementById('auth-section').style.display = 'none';
       document.getElementById('chat-container').style.display = 'flex';
       
-      document.getElementById('chat-header').querySelector('span').innerText = `Selamat Datang, ${currentUser.name}!`;
+      updateChatHeader('Selamat Datang, ' + currentUser.displayName + (currentUser.role === 'admin' ? ' <i class="fas fa-check-circle admin-badge"></i>' : ''));
+      document.getElementById('chat-partner-status').innerText = currentUser.bio || 'Status Anda';
       refreshUserList();
       
       if (currentUser.role === 'admin') {
@@ -1065,7 +1200,9 @@
       document.getElementById('user-controls-panel').style.display = 'none';
       document.getElementById('login-msg').innerText = 'Anda telah berhasil logout.';
       // Reset chat display
-      document.getElementById('chat-header').querySelector('span').innerText = 'Pilih Pengguna untuk Chat';
+      updateChatHeader('Pilih Pengguna untuk Chat');
+      document.getElementById('chat-partner-status').innerText = '';
+      document.getElementById('chat-partner-avatar').innerText = '';
       document.getElementById('chat-messages').innerHTML = '';
     }
 
@@ -1074,18 +1211,26 @@
       const ul = document.getElementById('user-ul');
       ul.innerHTML = '';
       
-      // Filter out current user and banned users (unless admin viewing)
-      const usersToDisplay = users.filter(u => u.username !== currentUser.username && !u.banned);
+      // Include all users, but filter out current user for display
+      const usersToDisplay = users.filter(u => u.username !== currentUser.username);
 
       usersToDisplay.forEach(u => {
         const li = document.createElement('li');
         li.setAttribute('data-username', u.username);
         li.onclick = () => startChat(u.username);
         
-        const avatarInitial = u.name.charAt(0).toUpperCase();
+        const avatarInitial = u.displayName.charAt(0).toUpperCase();
+        let userStatus = u.banned ? '<span style="color:red;">Dibanned</span>' : (u.online ? 'Online' : 'Offline'); // Placeholder for online status
+        
         li.innerHTML = `
           <div class="user-avatar">${avatarInitial}</div>
-          <span>${u.name} (${u.username})</span>
+          <div class="user-info">
+            <span class="user-name">
+                ${u.displayName}
+                ${u.role === 'admin' ? '<i class="fas fa-check-circle admin-badge" title="Admin"></i>' : ''}
+            </span>
+            <span class="user-username">${u.username}</span>
+          </div>
         `;
         ul.appendChild(li);
       });
@@ -1104,13 +1249,27 @@
 
       activeReceiver = username;
       document.getElementById('chat-messages').innerHTML = '';
-      const receiverName = users.find(u => u.username === username)?.name || 'Gemini AI';
-      document.getElementById('chat-header').querySelector('span').innerText = `Chat dengan ${receiverName}`;
+      
+      const targetUser = users.find(u => u.username === username);
+      if (username === 'gemini') {
+        updateChatHeader('Chat dengan Gemini AI');
+        document.getElementById('chat-partner-avatar').innerHTML = '<i class="fas fa-robot"></i>';
+        document.getElementById('chat-partner-status').innerText = 'Online';
+      } else if (targetUser) {
+        updateChatHeader(`Chat dengan ${targetUser.displayName} ${targetUser.role === 'admin' ? '<i class="fas fa-check-circle admin-badge" title="Admin"></i>' : ''}`);
+        document.getElementById('chat-partner-avatar').innerText = targetUser.displayName.charAt(0).toUpperCase();
+        document.getElementById('chat-partner-status').innerText = targetUser.bio || 'Online'; // Placeholder for online/offline
+      }
       
       const currentActiveLi = document.querySelector(`#user-ul li[data-username="${username}"]`);
       if (currentActiveLi) currentActiveLi.classList.add('active');
 
       loadMessages();
+    }
+
+    function updateChatHeader(mainText) {
+        document.getElementById('chat-partner-name').innerHTML = mainText;
+        // Optionally update header avatar too
     }
 
     function saveMessages() {
@@ -1183,7 +1342,7 @@
         const messageObject = { sender: currentUser.username, receiver: activeReceiver, type: 'text', content: msg, timestamp: currentTimestamp };
         messages[chatKey].push(messageObject);
         appendMessageToChat(messageObject);
-        new Notification(`📨 Pesan untuk ${users.find(u => u.username === activeReceiver)?.name || 'Gemini AI'}`, { body: msg, icon: 'https://cdn-icons-png.flaticon.com/512/732/732200.png' });
+        new Notification(`📨 Pesan untuk ${users.find(u => u.username === activeReceiver)?.displayName || 'Gemini AI'}`, { body: msg, icon: 'https://cdn-icons-png.flaticon.com/512/732/732200.png' });
       }
 
       if (file) {
@@ -1213,9 +1372,6 @@
         const reply = await geminiReply(msg);
         const geminiMessageObject = { sender: activeReceiver, receiver: currentUser.username, type: 'text', content: reply, timestamp: getTimestamp() };
         
-        // Gemini's reply is to the current user, so store it under the current chat key
-        // Or if you prefer to have a dedicated key for Gemini replies from its perspective: `${activeReceiver}-${currentUser.username}`
-        // For simplicity, we'll just add it to the current chat's history.
         messages[chatKey].push(geminiMessageObject);
         appendMessageToChat(geminiMessageObject);
         saveMessages();
@@ -1290,7 +1446,7 @@
               ${users.map(u => `
                 <tr style="${u.banned ? 'background-color: #ffe6e6;' : ''}">
                   <td style="padding: 10px; border: 1px solid #eee;">${u.username}</td>
-                  <td style="padding: 10px; border: 1px solid #eee;">${u.name}</td>
+                  <td style="padding: 10px; border: 1px solid #eee;">${u.displayName}</td>
                   <td style="padding: 10px; border: 1px solid #eee;">${u.role}</td>
                   <td style="padding: 10px; border: 1px solid #eee;">${u.stats.logins}</td>
                   <td style="padding: 10px; border: 1px solid #eee;">${u.stats.chatsSent}</td>
@@ -1306,9 +1462,9 @@
 
     function showBanUserModal() {
       const banOptions = users.filter(u => u.username !== currentUser.username && u.role !== 'admin' && !u.banned)
-                               .map(u => `<option value="${u.username}">${u.name} (${u.username})</option>`).join('');
+                               .map(u => `<option value="${u.username}">${u.displayName} (${u.username})</option>`).join('');
       const unbanOptions = users.filter(u => u.banned)
-                                 .map(u => `<option value="${u.username}">${u.name} (${u.username})</option>`).join('');
+                                 .map(u => `<option value="${u.username}">${u.displayName} (${u.username})</option>`).join('');
       
       openModal('Kelola Ban Pengguna', `
         <div style="margin-bottom: 20px;">
@@ -1342,10 +1498,10 @@
         const usernameToBan = selectElement.value;
         const userIndex = users.findIndex(u => u.username === usernameToBan);
         if (userIndex > -1) {
-            if (confirm(`Anda yakin ingin mem-ban pengguna ${users[userIndex].name} (${usernameToBan})?`)) {
+            if (confirm(`Anda yakin ingin mem-ban pengguna ${users[userIndex].displayName} (${usernameToBan})?`)) {
                 users[userIndex].banned = true;
                 localStorage.setItem('users', JSON.stringify(users));
-                alert(`Pengguna ${users[userIndex].name} berhasil di-ban.`);
+                alert(`Pengguna ${users[userIndex].displayName} berhasil di-ban.`);
                 refreshUserList();
                 showAdminStats();
                 closeModal(); // Close after action
@@ -1362,10 +1518,10 @@
         const usernameToUnban = selectElement.value;
         const userIndex = users.findIndex(u => u.username === usernameToUnban);
         if (userIndex > -1) {
-            if (confirm(`Anda yakin ingin meng-unban pengguna ${users[userIndex].name} (${usernameToUnban})?`)) {
+            if (confirm(`Anda yakin ingin meng-unban pengguna ${users[userIndex].displayName} (${usernameToUnban})?`)) {
                 users[userIndex].banned = false;
                 localStorage.setItem('users', JSON.stringify(users));
-                alert(`Pengguna ${users[userIndex].name} berhasil di-unban.`);
+                alert(`Pengguna ${users[userIndex].displayName} berhasil di-unban.`);
                 refreshUserList();
                 showAdminStats();
                 closeModal(); // Close after action
@@ -1375,12 +1531,12 @@
 
     function showDeleteUserModal() {
       const userOptions = users.filter(u => u.username !== currentUser.username && u.role !== 'admin')
-                               .map(u => `<option value="${u.username}">${u.name} (${u.username})</option>`).join('');
+                               .map(u => `<option value="${u.username}">${u.displayName} (${u.username})</option>`).join('');
       if (!userOptions) {
         alert('Tidak ada pengguna yang bisa dihapus.');
         return;
       }
-      openModal('Hapus Pengguna', `
+      openModal('Hapus Pengguna Permanen', `
         <p><b>Peringatan:</b> Aksi ini tidak dapat dibatalkan. Semua data chat pengguna akan hilang.</p>
         <p>Pilih pengguna yang ingin Anda hapus:</p>
         <select id="delete-user-select">
@@ -1390,7 +1546,7 @@
         const usernameToDelete = document.getElementById('delete-user-select').value;
         const userIndex = users.findIndex(u => u.username === usernameToDelete);
         if (userIndex > -1) {
-          if (confirm(`ANDA YAKIN INGIN MENGHAPUS PENGGUNA ${users[userIndex].name} (${usernameToDelete}) BESERTA SEMUA DATANYA? TINDAKAN INI PERMANEN!`)) {
+          if (confirm(`ANDA YAKIN INGIN MENGHAPUS PENGGUNA ${users[userIndex].displayName} (${usernameToDelete}) BESERTA SEMUA DATANYA? TINDAKAN INI PERMANEN!`)) {
             users.splice(userIndex, 1);
             // Also delete their chat history
             for (const key in messages) {
@@ -1400,12 +1556,14 @@
             }
             localStorage.setItem('users', JSON.stringify(users));
             saveMessages();
-            alert(`Pengguna ${usernameToDelete} berhasil dihapus.`);
+            alert(`Pengguna ${usernameToDelete} berhasil dihapus secara permanen.`);
             refreshUserList();
             showAdminStats();
             if (activeReceiver === usernameToDelete) {
                 activeReceiver = null;
-                document.getElementById('chat-header').querySelector('span').innerText = `Pilih Pengguna untuk Chat`;
+                updateChatHeader(`Pilih Pengguna untuk Chat`);
+                document.getElementById('chat-partner-avatar').innerText = '';
+                document.getElementById('chat-partner-status').innerText = '';
                 document.getElementById('chat-messages').innerHTML = '';
             }
           }
@@ -1415,21 +1573,30 @@
     }
 
     // --- User Control Functions ---
-    function changeDisplayName() {
-      openModal('Ganti Nama Tampilan', `
-        <p>Nama tampilan Anda saat ini: <b>${currentUser.name}</b></p>
-        <input type="text" id="new-display-name" placeholder="Nama Tampilan Baru" value="${currentUser.name}">
-      `, 'Ganti', () => {
-        const newName = document.getElementById('new-display-name').value.trim();
-        if (newName && newName !== currentUser.name) {
-          currentUser.name = newName;
-          localStorage.setItem('users', JSON.stringify(users));
-          alert('Nama tampilan berhasil diganti.');
-          document.getElementById('chat-header').querySelector('span').innerText = `Selamat Datang, ${currentUser.name}!`;
-          refreshUserList();
-        } else {
-          alert('Nama tampilan tidak boleh kosong atau sama dengan yang lama.');
+    function showEditProfileModal() {
+      openModal('Edit Profil Anda', `
+        <p>Nama Panggilan Anda:</p>
+        <input type="text" id="edit-display-name" placeholder="Nama Panggilan Baru" value="${currentUser.displayName}">
+        <p>Username Anda:</p>
+        <input type="text" id="edit-username" placeholder="Username Baru (tidak bisa diubah)" value="${currentUser.username}" disabled>
+        <p>Bio/Status Anda:</p>
+        <textarea id="edit-bio" placeholder="Tulis bio singkat Anda">${currentUser.bio || ''}</textarea>
+      `, 'Simpan Perubahan', () => {
+        const newDisplayName = document.getElementById('edit-display-name').value.trim();
+        const newBio = document.getElementById('edit-bio').value.trim();
+
+        if (newDisplayName && newDisplayName !== currentUser.displayName) {
+          currentUser.displayName = newDisplayName;
         }
+        if (newBio !== currentUser.bio) { // Allow empty bio
+          currentUser.bio = newBio;
+        }
+        
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Profil berhasil diperbarui!');
+        updateChatHeader('Selamat Datang, ' + currentUser.displayName + (currentUser.role === 'admin' ? ' <i class="fas fa-check-circle admin-badge"></i>' : ''));
+        document.getElementById('chat-partner-status').innerText = currentUser.bio || 'Status Anda';
+        refreshUserList();
         closeModal();
       });
     }
@@ -1464,13 +1631,16 @@
       });
     }
 
-    // --- Call and Profile Simulation Modals ---
+    // --- Call Simulation Modals ---
     function showCallModal(type) {
-        const targetName = users.find(u => u.username === activeReceiver)?.name || activeReceiver;
-        if (!activeReceiver) {
-            alert('Pilih pengguna terlebih dahulu untuk melakukan panggilan.');
+        const targetUser = users.find(u => u.username === activeReceiver);
+        const targetName = targetUser ? targetUser.displayName : (activeReceiver === 'gemini' ? 'Gemini AI' : 'Pengguna Tidak Dikenal');
+        
+        if (!activeReceiver || activeReceiver === 'gemini') {
+            alert('Pilih pengguna lain untuk melakukan panggilan.');
             return;
         }
+
         openModal(`Panggilan ${type === 'video' ? 'Video' : 'Suara'}`, `
             <p style="text-align: center; font-size: 1.2em; font-weight: 600;">
                 <i class="fas fa-circle-notch fa-spin" style="margin-right: 10px; color: ${type === 'video' ? '#FF6B6B' : '#4FD1C5'};"></i> 
@@ -1482,31 +1652,6 @@
             closeModal();
         });
         document.getElementById('modal-confirm-btn').classList.add('danger'); // Make button red for ending call
-    }
-
-    function showProfileModal() {
-        if (!activeReceiver || activeReceiver === 'gemini') {
-            alert('Pilih pengguna terlebih dahulu untuk melihat profil.');
-            return;
-        }
-        const targetUser = users.find(u => u.username === activeReceiver);
-        if (!targetUser) {
-            alert('Pengguna tidak ditemukan.');
-            return;
-        }
-        openModal(`Profil ${targetUser.name}`, `
-            <p><b>Nama:</b> ${targetUser.name}</p>
-            <p><b>Username:</b> ${targetUser.username}</p>
-            <p><b>Role:</b> ${targetUser.role === 'admin' ? 'Administrator' : 'Pengguna Biasa'}</p>
-            <p><b>Status:</b> ${targetUser.banned ? '<span style="color:red; font-weight:bold;">Dibanned</span>' : '<span style="color:green; font-weight:bold;">Aktif</span>'}</p>
-            <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #eee;">
-            <p><b>Statistik Chat:</b></p>
-            <ul>
-                <li>Pesan Terkirim: ${targetUser.stats.chatsSent}</li>
-                <li>Pesan Diterima: ${targetUser.stats.chatsReceived}</li>
-            </ul>
-        `, 'Tutup', null);
-        document.getElementById('modal-confirm-btn').style.display = 'none'; // No confirm action for viewing profile
     }
 
     // --- Universal Modal Functions ---
